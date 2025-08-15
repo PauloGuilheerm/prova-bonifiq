@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProvaPub.Models;
 using ProvaPub.Repository;
-using ProvaPub.Services;
+using ProvaPub.Services.Interfaces;
 
 namespace ProvaPub.Controllers
 {
@@ -18,24 +18,29 @@ namespace ProvaPub.Controllers
 		/// Como você faria pra criar uma estrutura melhor, com menos repetição de código? E quanto ao CustomerService/ProductService. Você acha que seria possível evitar a repetição de código?
 		/// 
 		/// </summary>
-		TestDbContext _ctx;
-		public Parte2Controller(TestDbContext ctx)
-		{
-			_ctx = ctx;
-		}
-	
-		[HttpGet("products")]
-		public ProductList ListProducts(int page)
-		{
-			var productService = new ProductService(_ctx);
-			return productService.ListProducts(page);
-		}
+		private readonly TestDbContext _ctx;
+        private readonly IProductService _productService;
+        private readonly ICustomerService _customerService;
 
-		[HttpGet("customers")]
-		public CustomerList ListCustomers(int page)
-		{
-			var customerService = new CustomerService(_ctx);
-			return customerService.ListCustomers(page);
-		}
-	}
+        public Parte2Controller(TestDbContext ctx, IProductService productService, ICustomerService customerService)
+        {
+			_ctx = ctx;
+            _productService = productService;
+            _customerService = customerService;
+        }
+
+        [HttpGet("products")]
+        public async Task<ActionResult<PageList<Product>>> GetProducts([FromQuery] int page = 1, CancellationToken ct = default)
+        {
+            var result = await _productService.GetPagedDataAsync(page, 10, ct);
+            return Ok(result);
+        }
+
+        [HttpGet("customers")]
+        public async Task<ActionResult<PageList<Customer>>> GetCustomers([FromQuery] int page = 1, CancellationToken ct = default)
+        {
+            var result = await _customerService.GetPagedDataAsync(page, 10, ct);
+            return Ok(result);
+        }
+    }
 }
