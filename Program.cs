@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using ProvaPub.Enums;
+using ProvaPub.Interfaces;
 using ProvaPub.Repository;
 using ProvaPub.Services;
-using ProvaPub.Services.Interfaces;
+using ProvaPub.Services.Payments;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +21,11 @@ builder.Services.AddDbContext<TestDbContext>(options =>
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
+builder.Services.AddScoped<IPaymentService, CreditCardPaymentType>();
+builder.Services.AddScoped<IPaymentService, PaypalPaymentType>();
+builder.Services.AddScoped<IPaymentService, PixPaymentType>();
 
 var app = builder.Build();
 

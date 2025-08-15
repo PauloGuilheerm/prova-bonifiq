@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProvaPub.Interfaces;
 using ProvaPub.Models;
 using ProvaPub.Repository;
-using ProvaPub.Services.Interfaces;
 
 namespace ProvaPub.Services
 {

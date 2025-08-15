@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProvaPub.Enums;
 using ProvaPub.Models;
 using ProvaPub.Repository;
 using ProvaPub.Services;
@@ -21,15 +23,17 @@ namespace ProvaPub.Controllers
 	public class Parte3Controller :  ControllerBase
 	{
 		[HttpGet("orders")]
-		public async Task<Order> PlaceOrder(string paymentMethod, decimal paymentValue, int customerId)
+		public async Task<Order> PlaceOrder(PaymentType paymentType, decimal paymentValue, int customerId)
 		{
             var contextOptions = new DbContextOptionsBuilder<TestDbContext>()
-    .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Teste;Trusted_Connection=True;")
-    .Options;
+            .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Teste;Trusted_Connection=True;")
+            .Options;
 
             using var context = new TestDbContext(contextOptions);
+            var orderService = new OrderService(context);
+            var order = await orderService.PayOrderAsync(customerId, paymentValue, paymentType);
 
-            return await new OrderService(context).PayOrder(paymentMethod, paymentValue, customerId);
+            return order;
 		}
-	}
+    }
 }

@@ -1,6 +1,6 @@
 using ProvaPub.Models;
 
-namespace ProvaPub.Services.Interfaces
+namespace ProvaPub.Interfaces
 {
     public interface IProductService
     {
